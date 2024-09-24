@@ -8,27 +8,25 @@ import DashboardPage from "./pages/dashboard";
 import { Loader2 } from "lucide-react";
 
 function App() {
-  const [user, loading] = useAuthState(auth);
+  // const [user, loading] = useAuthState(auth);
 
-  if (loading && !user?.email) {
-    return (
-      <div className="h-screen flex items-center justify-center  space-x-3">
-        <p className="text-sm text-neutral-500">Checking user authentication...</p>
-        <Loader2 className="animate-spin h-4" />
-      </div>
-    );
-  }
+  // if (loading && !user?.email) {
+  //   return (
+  //     <div className="h-screen flex items-center justify-center  space-x-3">
+  //       <p className="text-sm text-neutral-500">Checking user authentication...</p>
+  //       <Loader2 className="animate-spin h-4" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="h-screen  flex items-start justify-center">
-      <>
-        <Routes>
+        {/* <Routes>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />{" "}
-        </Routes>
-      </>
-      {/* )} */}
+          <Route path="/login" element={<LoginPage />} />
+        </Routes> */}
+        Hi there how are you
     </div>
   );
 }
