@@ -17,9 +17,8 @@ import { z } from "zod";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
+// import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -34,8 +33,8 @@ const formSchema = z.object({
 });
 
 const RegisterPage = () => {
-  const [user] = useAuthState(auth);
-  const navigate = useNavigate();
+  // const [user] = useAuthState(auth);
+  // const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,9 +45,9 @@ const RegisterPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (user) navigate("/dashboard");
-  }, [navigate, user]);
+  // useEffect(() => {
+  //   if (user) navigate("/dashboard");
+  // }, [navigate, user]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
