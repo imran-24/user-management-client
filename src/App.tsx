@@ -1,11 +1,4 @@
-import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import LoginPage from "./pages/login";
-import RegisterPage from "./pages/register";
-import { auth } from "./firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
-import DashboardPage from "./pages/dashboard";
-import { Loader2 } from "lucide-react";
 
 function App() {
   // const [user, loading] = useAuthState(auth);
