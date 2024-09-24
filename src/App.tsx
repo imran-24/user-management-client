@@ -1,4 +1,6 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import RegisterPage from "./pages/register";
 
 function App() {
   // const [user, loading] = useAuthState(auth);
@@ -14,12 +16,12 @@ function App() {
 
   return (
     <div className="h-screen  flex items-start justify-center">
-        {/* <Routes>
-          <Route path="/dashboard" element={<DashboardPage />} />
+        <Routes>
+          {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Routes> */}
-        Hi there how are you
+          {/* <Route path="/login" element={<LoginPage />} /> */}
+        </Routes>
+        {/* Hi there how are you */}
     </div>
   );
 }
