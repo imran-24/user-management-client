@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
@@ -6,27 +6,52 @@ import { auth } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import DashboardPage from "./pages/dashboard";
 import { Loader2 } from "lucide-react";
+import NotFoundPage from "./pages/not-found";
+import { useEffect } from "react";
 
 function App() {
   const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Redirect to login if the user is not authenticated and not on register page
+    if (!user && !loading && window.location.pathname !== "/register") {
+      setTimeout(() =>{
+        navigate("/login");
+      },3000);
+    }
+  }, [user, loading, navigate]);
 
-  if (loading && !user?.email) {
+  if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center  space-x-3">
+      <div className="h-screen flex items-center justify-center space-x-3">
         <p className="text-sm text-neutral-500">Checking user authentication...</p>
         <Loader2 className="animate-spin h-4" />
       </div>
     );
   }
-
+  if (user) navigate("/dashboard");
+  
   return (
-    <div className="h-screen  flex items-start justify-center">
+    <div className='h-screen  flex items-start justify-center'>
       <>
-        <Routes>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />{" "}
-        </Routes>
+          <Routes>
+            {/* Redirect to dashboard if authenticated */}
+            <Route
+              path='/dashboard'
+              element={user ? <DashboardPage /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/register'
+              element={!user ? <RegisterPage /> : <Navigate to='/dashboard' />}
+            />
+            <Route
+              path='/login'
+              element={!user ? <LoginPage /> : <Navigate to='/dashboard' />}
+            />
+
+            {/* Wildcard route for undefined pages */}
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
       </>
       {/* )} */}
     </div>

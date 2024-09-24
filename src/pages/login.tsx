@@ -93,7 +93,7 @@ const LoginPage = () => {
       });
   }
 
-  if (user) navigate("/dashboard");
+  if(user) navigate("/dashboard");
 
   return (
     <div className="w-full h-full flex items-center">

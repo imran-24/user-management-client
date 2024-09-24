@@ -18,7 +18,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
@@ -45,10 +44,6 @@ const RegisterPage = () => {
       password: "",
     },
   });
-
-  useEffect(() => {
-    if (user) navigate("/dashboard");
-  }, [navigate, user]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -78,6 +73,9 @@ const RegisterPage = () => {
         console.error("Error during sign up:", errorCode, errorMessage);
       });
   }
+
+  if(user) navigate("/dashboard")
+
 
   return (
     <div className="w-full h-full flex items-center">

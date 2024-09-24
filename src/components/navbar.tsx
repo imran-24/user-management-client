@@ -19,6 +19,9 @@ const Navbar = ({username}: {username: string}) => {
         console.error("Error during sign out:", error);
       });
   }
+
+  if(!username) navigate("/login");
+  
   return (
     <nav className="w-full fixed top-0 right-0 left-0  bg-white border-b h-12">
       <div className="flex items-center justify-end space-x-2 w-full max-w-7xl  h-full">
