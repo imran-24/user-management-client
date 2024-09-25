@@ -22,6 +22,8 @@ import { auth, db } from "@/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import axios from "axios";
 import { getDeleteUserById } from "@/actions/get-delete-user";
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -40,6 +42,8 @@ const Table = ({ data, updateUsers }: TableProps) => {
   const [blocking, setBlocking] = useState(false);
   const [unBlocking, setUnblocking] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -88,6 +92,19 @@ const Table = ({ data, updateUsers }: TableProps) => {
 
   const baseURL = import.meta.env.VITE_REACT_SERVER_URL;
 
+  function logOut() {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful
+        navigate("/login");
+        console.log("User signed out");
+      })
+      .catch((error) => {
+        console.error("Error during sign out:", error);
+      });
+  }
+
+
   // account deletion
   const onDelete = async () => {
     if (!user) return;
@@ -103,6 +120,9 @@ const Table = ({ data, updateUsers }: TableProps) => {
             await getDeleteUserById(id!).then(() => {
               setDeleting(false);
               window.alert("User deleted");
+              if(id == user.uid){
+                logOut()
+              }
               updateUsers();
             });
           });
