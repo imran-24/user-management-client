@@ -9,7 +9,7 @@ import NotFoundPage from "./pages/not-found";
 import LandingPage from "./pages/landing";
 
 function App() {
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   // const navigate = useNavigate();
   // if (loading) {
   //   return (
