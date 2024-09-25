@@ -7,20 +7,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import DashboardPage from "./pages/dashboard";
 import { Loader2 } from "lucide-react";
 import NotFoundPage from "./pages/not-found";
-import { useEffect } from "react";
 import LandingPage from "./pages/landing";
 
 function App() {
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   // Redirect to login if the user is not authenticated and not on register page
-  //   if (!user && !loading && window.location.pathname !== "/register") {
-  //     setTimeout(() => {
-  //       navigate("/login");
-  //     }, 3000);
-  //   }
-  // }, [user, loading, navigate]);
 
   if (loading) {
     return (
