@@ -103,7 +103,7 @@ const Table = ({ data, updateUsers }: TableProps) => {
             await getDeleteUserById(id!).then(() => {
               setDeleting(false);
               window.alert("User deleted");
-              window.location.reload();
+              updateUsers();
             });
           });
         } catch (error) {
