@@ -9,7 +9,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
-  const [user] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [users, setUsers] = useState<DataList>([]);
   const [status, setStatus] = useState(null); // State to store user's status
   const [name, setName] = useState(""); // State to store user's status
@@ -54,7 +54,7 @@ const DashboardPage = () => {
     }
   }, [status, navigate]);
 
-  if (!user) navigate("/login");
+  if (!loading && !user?.email) navigate("/login");
 
   return (
     <div className="pt-20 w-full overflow-hidden">
