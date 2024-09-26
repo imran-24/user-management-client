@@ -117,10 +117,11 @@ const RegisterPage = () => {
       );
       setLoading(false);
       console.log("User signed up successfully");
-    } catch (error) {
+    } catch (error: unknown) {
       setLoading(false);
+      const errorMessage = (error as Error).message || "An unknown error occurred";
       console.error("Error signing up user:", error);
-      window.alert("An error occurred during sign-up. Please try again.");
+      window.alert(errorMessage);
     }
   }
 
