@@ -45,8 +45,11 @@ const RegisterPage = () => {
     },
   });
 
+
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // console.log(checkUniqueField("users", "email", values.email));
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then(async (userCredential) => {
         // Signed up successfully
@@ -55,53 +58,56 @@ const RegisterPage = () => {
           const docRef = doc(db, "users", userCredential.user.uid!);
 
           // Set the document with the custom ID (email)
-          await setDoc(docRef, {
-            name: values.username,
-            email: userCredential.user.email,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            status: true,
-          }, { merge: true });
+          await setDoc(
+            docRef,
+            {
+              name: values.username,
+              email: userCredential.user.email,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              status: true,
+            },
+            { merge: true }
+          );
           console.log("User signed up");
         } catch (error) {
-          console.error("Error setting document:", error);
+          window.alert(error);
         }
       })
       .catch((error) => {
-        const errorCode = error.code;
+        // const errorCode = error.code;
         const errorMessage = error.message;
-        console.error("Error during sign up:", errorCode, errorMessage);
+        window.alert(errorMessage);
       });
   }
 
-  if(user) navigate("/dashboard")
-
+  if (user) navigate("/dashboard");
 
   return (
-    <div className="w-full h-full flex items-center">
-      <Card className="w-full max-w-md mx-auto p-4">
+    <div className='w-full h-full flex items-center'>
+      <Card className='w-full max-w-md mx-auto p-4'>
         <CardContent>
-          <div className="space-y-8 w-full max-w-xs mx-auto ">
-            <div className="">
-              <h2 className="text-4xl font-semibold">Sign up</h2>
-              <p className="text-neutral-500 text-sm tracking-wider">
+          <div className='space-y-8 w-full max-w-xs mx-auto '>
+            <div className=''>
+              <h2 className='text-4xl font-semibold'>Sign up</h2>
+              <p className='text-neutral-500 text-sm tracking-wider'>
                 Create you account
               </p>
             </div>
-            <div className="space-y-8 relative">
+            <div className='space-y-8 relative'>
               <Button
                 variant={"secondary"}
                 size={"lg"}
-                className="w-full h-12 rounded-lg"
+                className='w-full h-12 rounded-lg'
               >
-                <FcGoogle className="size-6" />
-                <span className="ml-3 font-semibold">Sign up with Google</span>
+                <FcGoogle className='size-6' />
+                <span className='ml-3 font-semibold'>Sign up with Google</span>
               </Button>
-              <div className="relative pb-4">
-                <p className="text-gray-400 text-center text-xs bg-white w-fit px-2 absolute bottom-0 left-0 right-0 mx-auto  z-20 ">
+              <div className='relative pb-4'>
+                <p className='text-gray-400 text-center text-xs bg-white w-fit px-2 absolute bottom-0 left-0 right-0 mx-auto  z-20 '>
                   Or continue with
                 </p>
-                <div className=" h-[1px] bg-gray-200 w-full  absolute bottom-2 z-10" />
+                <div className=' h-[1px] bg-gray-200 w-full  absolute bottom-2 z-10' />
               </div>
             </div>
             <div></div>
@@ -109,15 +115,15 @@ const RegisterPage = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className='space-y-4'
                 >
                   <FormField
                     control={form.control}
-                    name="username"
+                    name='username'
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input label="Enter username" {...field} />
+                          <Input label='Enter username' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -125,11 +131,11 @@ const RegisterPage = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="email"
+                    name='email'
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input label="Enter email" {...field} />
+                          <Input label='Enter email' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -137,31 +143,31 @@ const RegisterPage = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="password"
+                    name='password'
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input label="Enter password" {...field} />
+                          <Input label='Enter password' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <Button
-                    type="submit"
+                    type='submit'
                     size={"lg"}
-                    className="w-full h-12 rounded-lg"
+                    className='w-full h-12 rounded-lg'
                   >
                     Sign Up
                   </Button>
                 </form>
               </Form>
-              <div className="space-y-8 mt-8 text-sm">
+              <div className='space-y-8 mt-8 text-sm'>
                 <p>
                   Already have an account?{" "}
                   <a
-                    href="/login"
-                    className="underline cursor-pointer font-medium"
+                    href='/login'
+                    className='underline cursor-pointer font-medium'
                   >
                     Login
                   </a>
