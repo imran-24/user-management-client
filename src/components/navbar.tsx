@@ -25,7 +25,7 @@ const Navbar = ({username}: {username: string}) => {
   return (
     <nav className="w-full fixed top-0 right-0 left-0  bg-white border-b h-12">
       <div className="flex items-center justify-end space-x-2 w-full max-w-7xl  h-full">
-        <p className="text-xs">{username}</p>
+        <p className="text-xs">{username && `welcome ${username}`}</p>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>

@@ -22,7 +22,8 @@ const DashboardPage = () => {
     const userList: any = [];
     const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
-      if (doc.id === user?.uid) {
+      // changed
+      if (doc.id === user?.email) {
         setStatus(doc.data().status);
         setName(doc.data().name)
       }

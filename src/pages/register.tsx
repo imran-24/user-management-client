@@ -19,6 +19,9 @@ import { auth, db } from "@/firebase";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -33,6 +36,7 @@ const formSchema = z.object({
 });
 
 const RegisterPage = () => {
+  const [loading, setLoading] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -45,40 +49,78 @@ const RegisterPage = () => {
     },
   });
 
+  const checkUniqueField = async (
+    collectionName: string,
+    fieldName: string,
+    value: string
+  ) => {
+    try {
+      const q = query(
+        collection(db, collectionName),
+        where(fieldName, "==", value)
+      );
+      const querySnapshot = await getDocs(q);
 
+      if (!querySnapshot.empty) {
+        // Return the first matching document data
+        return querySnapshot.docs[0].id;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error checking unique field:", error);
+      return null; // Handle errors gracefully
+    }
+  };
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(checkUniqueField("users", "email", values.email));
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then(async (userCredential) => {
-        // Signed up successfully
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      if(!values.email || !values.password) return window.alert("Please fill out the credentials");
+      setLoading(true);
+      // Check if the email already exists
+      const existingUser = await checkUniqueField(
+        "users",
+        "email",
+        values.email
+      );
 
-        try {
-          const docRef = doc(db, "users", userCredential.user.uid!);
+      const docRef = doc(db, "users", values.email!);
 
-          // Set the document with the custom ID (email)
-          await setDoc(
-            docRef,
-            {
-              name: values.username,
-              email: userCredential.user.email,
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp(),
-              status: true,
-            },
-            { merge: true }
-          );
-          console.log("User signed up");
-        } catch (error) {
-          window.alert(error);
-        }
-      })
-      .catch((error) => {
-        // const errorCode = error.code;
-        const errorMessage = error.message;
-        window.alert(errorMessage);
-      });
+      if (existingUser && docRef.id === existingUser) {
+        window.alert("An account already exists with this email address.");
+        setLoading(false);
+        return; // Early return if the user already exists
+      }
+
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+
+      const { user } = userCredential;
+
+      // Set user document in Firestore
+      // changed
+      await setDoc(
+        docRef,
+        {
+          name: values.username,
+          email: user.email,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          status: true,
+        },
+        { merge: true }
+      );
+      setLoading(false);
+      console.log("User signed up successfully");
+    } catch (error) {
+      setLoading(false);
+      console.error("Error signing up user:", error);
+      window.alert("An error occurred during sign-up. Please try again.");
+    }
   }
 
   if (user) navigate("/dashboard");
@@ -156,9 +198,14 @@ const RegisterPage = () => {
                   <Button
                     type='submit'
                     size={"lg"}
-                    className='w-full h-12 rounded-lg'
+                    disabled={loading}
+                    className='w-full h-12 rounded-lg disabled:bg-opacity-70 hover:disabled:cursor-not-allowed'
                   >
-                    Sign Up
+                    {loading ? (
+                      <Loader2 className='animate-spin h-4' />
+                    ) : (
+                      "Sign Up"
+                    )}
                   </Button>
                 </form>
               </Form>

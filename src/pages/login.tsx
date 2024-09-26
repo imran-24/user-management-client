@@ -25,6 +25,8 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -36,6 +38,7 @@ const formSchema = z.object({
 });
 
 const LoginPage = () => {
+  const [loading, setLoading] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -79,18 +82,23 @@ const LoginPage = () => {
     if (!values.email || !values.password) {
       return;
     }
+    setLoading(true);
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         // Signed in successfully
         const user = userCredential.user;
-        updateUser(user.uid!);
+        // changed
+        updateUser(user.email!);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         window.alert(errorMessage);
         console.error("Error during sign in:", errorCode, errorMessage);
-      });
+      })
+      .finally(()=>{
+        setLoading(false);
+      })
   }
 
   if(user) navigate("/dashboard");
@@ -155,7 +163,11 @@ const LoginPage = () => {
                     size={"lg"}
                     className="w-full h-12 rounded-lg"
                   >
-                    Login
+                    {loading ? (
+                      <Loader2 className='animate-spin h-4' />
+                    ) : (
+                      "Login"
+                    )}
                   </Button>
                 </form>
               </Form>

@@ -120,7 +120,8 @@ const Table = ({ data, updateUsers }: TableProps) => {
             await getDeleteUserById(id!).then(() => {
               setDeleting(false);
               window.alert("User deleted");
-              if(id == user.uid){
+              // changed 
+              if(id == user.email){
                 logOut()
               }
               updateUsers();
