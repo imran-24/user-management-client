@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow } from "date-fns";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -53,7 +53,6 @@ const Table = ({ data, updateUsers }: TableProps) => {
   });
 
   const list = form.watch("items");
-
   // block account function
   const updateStatus = async (status: string) => {
     try {
@@ -104,7 +103,6 @@ const Table = ({ data, updateUsers }: TableProps) => {
       });
   }
 
-
   // account deletion
   const onDelete = async () => {
     if (!user) return;
@@ -116,23 +114,28 @@ const Table = ({ data, updateUsers }: TableProps) => {
     if (userConfirmed) {
       for (const id of list) {
         try {
-          await axios.delete(`${baseURL}/users/${id}`).then(async () => {
-            await getDeleteUserById(id!).then(() => {
-              setDeleting(false);
-              window.alert("User deleted");
-              // changed 
-              if(id == user.email){
-                logOut()
-              }
-              updateUsers();
+          const docRef = doc(db, "users", id); // Assuming each user has an 'id'
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await axios.delete(`${baseURL}/users/${docSnap.data().id}`).then(async () => {
+              await getDeleteUserById(id!).then(() => {
+                setDeleting(false);
+                window.alert("User deleted");
+                // changed
+                if (id == user.email) {
+                  logOut();
+                }
+                updateUsers();
+              });
             });
-          });
+          }
         } catch (error) {
           console.log(error);
           window.alert("Something went wrong");
           setDeleting(false);
         }
       }
+      form.setValue('items',[]);
     } else {
       setDeleting(false);
       console.log("User canceled the deletion");
@@ -141,16 +144,16 @@ const Table = ({ data, updateUsers }: TableProps) => {
 
   if (!data.length) {
     return (
-      <div className="flex items-center justify-center space-x-3 w-full ">
-        <p className="text-sm text-neutral-500">Loading data...</p>
-        <Loader2 className="animate-spin h-4" />
+      <div className='flex items-center justify-center space-x-3 w-full '>
+        <p className='text-sm text-neutral-500'>Loading data...</p>
+        <Loader2 className='animate-spin h-4' />
       </div>
     );
   }
 
   return (
     <>
-      <div className="flex items-center justify-end space-x-2 py-4 w-full max-w-5xl mx-auto overflow-x-auto">
+      <div className='flex items-center justify-end space-x-2 py-4 w-full max-w-5xl mx-auto overflow-x-auto'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -161,7 +164,7 @@ const Table = ({ data, updateUsers }: TableProps) => {
                 size={"icon"}
               >
                 {unBlocking ? (
-                  <Loader2 className="size-4 text-neutral-500 animate-spin" />
+                  <Loader2 className='size-4 text-neutral-500 animate-spin' />
                 ) : (
                   <ShieldBan size={20} />
                 )}
@@ -183,9 +186,9 @@ const Table = ({ data, updateUsers }: TableProps) => {
                 onClick={onDelete}
               >
                 {deleting ? (
-                  <Loader2 className="size-4 text-neutral-500 animate-spin" />
+                  <Loader2 className='size-4 text-neutral-500 animate-spin' />
                 ) : (
-                  <Trash2 size={20} className="text-rose-500" />
+                  <Trash2 size={20} className='text-rose-500' />
                 )}
               </Button>
             </TooltipTrigger>
@@ -198,37 +201,37 @@ const Table = ({ data, updateUsers }: TableProps) => {
         <Button
           size={"sm"}
           onClick={() => updateStatus("block")}
-          className="font-semibold py-1 rounded-lg border-2  text-xs  h-fit"
+          className='font-semibold py-1 rounded-lg border-2  text-xs  h-fit'
           disabled={list.length <= 0}
           variant={"destructive"}
         >
           {blocking ? "Blocking" : "Block"}
           {blocking ? (
-            <Loader2 className="size-4 text-white animate-spin" />
+            <Loader2 className='size-4 text-white animate-spin' />
           ) : (
-            <Shield className="ml-1" size={16} />
+            <Shield className='ml-1' size={16} />
           )}
         </Button>
       </div>
 
       <Form {...form}>
-        <form className="space-y-8 w-full max-w-5xl mx-auto overflow-x-auto ">
-          <table className="table-auto border-collapse border w-full border-gray-200 ">
-            <thead className="bg-gray-100 text-xs sm:text-sm">
+        <form className='space-y-8 w-full max-w-5xl mx-auto overflow-x-auto '>
+          <table className='table-auto border-collapse border w-full border-gray-200 '>
+            <thead className='bg-gray-100 text-xs sm:text-sm'>
               <tr>
-                <th className="px-3 py-2 text-left">
+                <th className='px-3 py-2 text-left'>
                   <FormField
                     control={form.control}
-                    name="items"
+                    name='items'
                     render={({ field }) => (
-                      <FormItem className="">
+                      <FormItem className=''>
                         <FormControl>
                           <Checkbox
                             checked={field.value?.length === data.length}
                             onCheckedChange={(checked) => {
                               return checked
                                 ? field.onChange([
-                                    ...data.map((item) => item.id),
+                                    ...data.map((item) => item.email),
                                   ])
                                 : field.onChange([]);
                             }}
@@ -238,22 +241,22 @@ const Table = ({ data, updateUsers }: TableProps) => {
                     )}
                   />
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Id
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Name
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Email
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Last login time
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Registration Time
                 </th>
-                <th className="border p-3 text-xs tracking-tighter text-left">
+                <th className='border p-3 text-xs tracking-tighter text-left'>
                   Status
                 </th>
               </tr>
@@ -266,21 +269,21 @@ const Table = ({ data, updateUsers }: TableProps) => {
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
-                  <td className="px-3 py-2 text-xs truncate border-r">
+                  <td className='px-3 py-2 text-xs truncate border-r'>
                     <FormField
                       control={form.control}
-                      name="items"
+                      name='items'
                       render={({ field }) => (
-                        <FormItem className="">
+                        <FormItem className=''>
                           <FormControl>
                             <Checkbox
-                              checked={field?.value?.includes(item.id)}
+                              checked={field?.value?.includes(item.email)}
                               onCheckedChange={(checked) => {
                                 return checked
-                                  ? field.onChange([...field.value, item.id])
+                                  ? field.onChange([...field.value, item.email])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value) => value !== item.id
+                                        (value) => value !== item.email
                                       )
                                     );
                               }}
@@ -290,32 +293,36 @@ const Table = ({ data, updateUsers }: TableProps) => {
                       )}
                     />
                   </td>
-                  <td className="px-3 py-2 text-xs truncate">
+                  <td className='px-3 py-2 text-xs truncate'>
                     <Button
-                      type="button"
+                      type='button'
                       onClick={(e: React.MouseEvent) => onCopy(e, item.id)}
                       variant={"ghost"}
                       size={"icon"}
-                      className="h-8 "
+                      className='h-8 '
                     >
                       {copied === item.id ? (
-                        <Check className="h-4 w-4 text-green-500" />
+                        <Check className='h-4 w-4 text-green-500' />
                       ) : (
-                        <Copy className="h-4 w-4 text-neutral-500" />
+                        <Copy className='h-4 w-4 text-neutral-500' />
                       )}
                     </Button>
                   </td>
-                  <td className="px-3 py-2 text-xs truncate  max-w-40">
+                  <td className='px-3 py-2 text-xs truncate  max-w-40'>
                     {item.name}
                   </td>
-                  <td className="px-3 py-2 text-xs">{item.email}</td>
-                  <td className="px-3 py-2 text-xs">
-                  {item.updatedAt ? formatDistanceToNow(item.updatedAt?.toDate()) : "-"}
+                  <td className='px-3 py-2 text-xs'>{item.email}</td>
+                  <td className='px-3 py-2 text-xs'>
+                    {item.updatedAt
+                      ? formatDistanceToNow(item.updatedAt?.toDate())
+                      : "-"}
                   </td>
-                  <td className="px-3 py-2 text-xs">
-                  {item.createdAt ? formatDistanceToNow(item.createdAt?.toDate()) : "-"}
+                  <td className='px-3 py-2 text-xs'>
+                    {item.createdAt
+                      ? formatDistanceToNow(item.createdAt?.toDate())
+                      : "-"}
                   </td>
-                  <td className="px-3 py-2 text-xs">
+                  <td className='px-3 py-2 text-xs'>
                     {item.status ? (
                       <Badge variant={"outline"}>
                         <p>Active</p>

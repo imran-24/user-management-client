@@ -28,7 +28,7 @@ const DashboardPage = () => {
         setName(doc.data().name)
       }
       userList.push({
-        id: doc.id,
+        // id: doc.id,
         ...doc.data(),
       });
     });

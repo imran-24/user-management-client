@@ -106,6 +106,7 @@ const RegisterPage = () => {
       await setDoc(
         docRef,
         {
+          id: user.uid,
           name: values.username,
           email: user.email,
           createdAt: serverTimestamp(),
