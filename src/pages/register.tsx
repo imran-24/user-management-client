@@ -73,10 +73,14 @@ const RegisterPage = () => {
     }
   };
 
+  
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      if(!values.email || !values.password) return window.alert("Please fill out the credentials");
+      if (!values.email || !values.password)
+        return window.alert("Please fill out the credentials");
       setLoading(true);
+      
       // Check if the email already exists
       const existingUser = await checkUniqueField(
         "users",
@@ -93,35 +97,37 @@ const RegisterPage = () => {
       }
 
       // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-
-      const { user } = userCredential;
-
-      // Set user document in Firestore
-      // changed
-      await setDoc(
-        docRef,
-        {
-          id: user.uid,
-          name: values.username,
-          email: user.email,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          status: true,
-        },
-        { merge: true }
-      );
-      setLoading(false);
-      console.log("User signed up successfully");
+      await createUserWithEmailAndPassword(auth, values.email, values.password)
+        .then(async (userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          await setDoc(
+            docRef,
+            {
+              id: user.uid,
+              name: values.username,
+              email: user.email,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              status: true,
+            },
+            { merge: true }
+          ).then(() => {});
+          setLoading(false);
+          console.log("User signed up successfully");
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          window.alert(errorMessage);
+        });
     } catch (error: unknown) {
       setLoading(false);
-      const errorMessage = (error as Error).message || "An unknown error occurred";
+      const errorMessage =
+        (error as Error).message || "An unknown error occurred";
       console.error("Error signing up user:", error);
       window.alert(errorMessage);
+    } finally {
+      setLoading(false);
     }
   }
 
